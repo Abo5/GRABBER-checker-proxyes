@@ -82,9 +82,16 @@ By using this script, you can quickly grab and check proxies without the need fo
 
 -------------------------------------------------
 **Features of the script**
+
 the script check if there librarys or will install it ✅
+
 To exit the script, type 00 or exit ✅
+
+
 Searches for you in 80 sites ✅
+
 Checks proxies on two types of connection on Google's website HTTP, HTTPS ✅
+
 Examines the work proxy for you and sorts it into a file called Hits.txt ✅
+
 if not work proxy It deletes the proxy file in proxy.txt ✅
