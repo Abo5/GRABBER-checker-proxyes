@@ -29,6 +29,7 @@ sudo gem update && sudo gem install httparty json openssl
 gem update && gem install httparty json openssl
 ```
 **iSH app** 
+
 it’s take a while
 ```
 apk add ruby
