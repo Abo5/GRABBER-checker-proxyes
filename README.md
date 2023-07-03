@@ -62,11 +62,17 @@ By using this script, you can quickly grab and check proxies without the need fo
 **مميزات السكربت**
 
 يثبت لك ويفحص لك اذا المكتبات موجودة ✅
+
 للخروج من السكربت اكتب 00 او exit ✅
+
 يبحث لك في 80 موقع ✅
-يفحص لك البروكسيات على نوعين من الاتصال على موقع قوقل HTTP , HTTPS✅ 
+
+يفحص لك البروكسيات على نوعين من الاتصال على موقع قوقل HTTP , HTTPS✅
+ 
 يفحص لك الشغال ويفرزه في ملف بأسم Hits.txt ✅
+
 يحذف لك الي مو شغال من الملف proxy.txt ✅
+
 -------------------------------------------------
 **Features of the script**
 the script check if there librarys or will install it ✅
