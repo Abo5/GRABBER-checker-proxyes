@@ -65,6 +65,7 @@ By using this script, you can quickly grab and check proxies without the need fo
 
 # Note: 
 **The script focuses on its core functionality and avoids including any unrelated features or distractions for the user.**
+# ----------------------------------------------------------------------
 
 **مميزات السكربت**
 
