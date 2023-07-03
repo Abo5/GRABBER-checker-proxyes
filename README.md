@@ -72,7 +72,7 @@ By using this script, you can quickly grab and check proxies without the need fo
 
 للخروج من السكربت اكتب 00 او exit ✅
 
-يبحث لك في 80 موقع ✅
+يبحث لك في100 موقع ✅
 
 يفحص لك البروكسيات على نوعين من الاتصال على موقع قوقل HTTP , HTTPS✅
  
