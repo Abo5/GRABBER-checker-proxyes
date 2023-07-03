@@ -60,6 +60,7 @@ By using this script, you can quickly grab and check proxies without the need fo
 **The script focuses on its core functionality and avoids including any unrelated features or distractions for the user.**
 
 **مميزات السكربت**
+
 يثبت لك ويفحص لك اذا المكتبات موجودة ✅
 للخروج من السكربت اكتب 00 او exit ✅
 يبحث لك في 80 موقع ✅
