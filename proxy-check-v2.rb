@@ -2,11 +2,11 @@
 require 'httparty'
 require 'json'
 require 'openssl'
-require 'socket'
 # clear_in_terminal
 
 clear = `clear`
 puts clear
+
 gems_to_check = ['httparty', 'openssl', 'json'] # array_of_gem
 gems_to_check.each do |gem|
   gem_installed = Gem::Specification.find_by_name(gem) # check_if_gem_is_install_it?
@@ -131,66 +131,44 @@ puts "\e[38;2;0;255;0mAll Proxies are saved in proxy.txt\e[0m"
 puts "#{orange}[!] Grabbing Proxies Is Done, Now Checking"
 
 if choice == 1 || choice == 3
-  puts "#{orange}[!] Checking Proxies...\n"
-  
-  def check_proxy(proxy)
-    proxy_host, proxy_port = proxy.split(':')
-    begin
-      timeout = 2
-      Socket.tcp(proxy_host, proxy_port, connect_timeout: timeout) {}
-      puts "\e[38;2;144;238;144mWorking ----> #{proxy_host}:#{proxy_port}\e[0m"
-      hits_file = File.open(File.join(__dir__, 'Hits-proxy.txt'), 'a') do |file|
-        file.puts proxy
-      end
-    rescue StandardError => e
-      puts "\e[38;2;255;165;0m#{proxy} not working. #{e.message}\e[0m"
-    end
-  end
-
+  puts "#{orange}[!] Grabbing Proxies Is Done, Now Checking"
   proxies = File.readlines(File.join(__dir__, 'proxy.txt'), chomp: true) # Open file and read lines
   proxies.each do |proxy|
-    check_proxy(proxy)
-  end
-end
-
-
-puts "#{orange}[!] Grabbing Proxies Is Done, Now Checking"
-proxies = File.readlines(File.join(__dir__, 'proxy.txt'), chomp: true) # Open file and read lines
-proxies.each do |proxy|
-  proxy_host, proxy_port = proxy.split(':')
-  begin
-    response = HTTParty.get('http://www.google.com', http_proxyaddr: proxy_host, http_proxyport: proxy_port, timeout: 0.5) # Send request
-    if response.code == 200 # Check if the response code is 200
-      puts "\e[38;2;144;238;144mWorking on HTTP ----> #{proxy_host}:#{proxy_port}\e[0m"
-      hits_file = File.open(File.join(__dir__, 'Hits-proxy.txt'), 'a') do |file|
-        file.puts "#{proxy_host}:#{proxy_port}"
-      end
-    else
-      response_https = HTTParty.get('https://www.google.com', http_proxyaddr: proxy_host, http_proxyport: proxy_port, timeout: 0.5, verify: OpenSSL::SSL::VERIFY_NONE) # Send request with ssl
-      if response_https.code == 200 # Check if the response code is 200
-        puts "\e[38;2;144;238;144mWorking on HTTPS ----> #{proxy_host}:#{proxy_port}\e[0m"
-        hits_file = File.open(File.join(__dir__, 'Hits-proxy.txt'), 'a') do |file| # Save the hit proxy in Hits-proxy.txt
+    proxy_host, proxy_port = proxy.split(':')
+    begin
+      response = HTTParty.get('http://www.google.com', http_proxyaddr: proxy_host, http_proxyport: proxy_port, timeout: 0.5) # Send request
+      if response.code == 200 # Check if the response code is 200
+        puts "\e[38;2;144;238;144mWorking on HTTP ----> #{proxy_host}:#{proxy_port}\e[0m"
+        hits_file = File.open(File.join(__dir__, 'Hits-proxy.txt'), 'a') do |file|
           file.puts "#{proxy_host}:#{proxy_port}"
         end
       else
-        puts "\e[38;2;255;105;180m#{proxy} not working. HTTP code: #{response.code}, HTTPS code: #{response_https.code}\e[0m"
-        # Delete the proxy from the proxy.txt file
-        proxy_file = File.join(__dir__, 'proxy.txt')
-        proxies.delete(proxy)
-        # Rewrite the rest of the content into the file
-        File.open(proxy_file, 'w') do |file|
-          proxies.each { |p| file.puts(p) }
+        response_https = HTTParty.get('https://www.google.com', http_proxyaddr: proxy_host, http_proxyport: proxy_port, timeout: 0.5, verify: OpenSSL::SSL::VERIFY_NONE) # Send request with ssl
+        if response_https.code == 200 # Check if the response code is 200
+          puts "\e[38;2;144;238;144mWorking on HTTPS ----> #{proxy_host}:#{proxy_port}\e[0m"
+          hits_file = File.open(File.join(__dir__, 'Hits-proxy.txt'), 'a') do |file| # Save the hit proxy in Hits-proxy.txt
+            file.puts "#{proxy_host}:#{proxy_port}"
+          end
+        else
+          puts "\e[38;2;255;105;180m#{proxy} not working. HTTP code: #{response.code}, HTTPS code: #{response_https.code}\e[0m"
+          # Delete the proxy from the proxy.txt file
+          proxy_file = File.join(__dir__, 'proxy.txt')
+          proxies.delete(proxy)
+          # Rewrite the rest of the content into the file
+          File.open(proxy_file, 'w') do |file|
+            proxies.each { |p| file.puts(p) }
+          end
         end
       end
-    end
-  rescue StandardError => e
-    puts "\e[38;2;255;165;0m#{proxy} not working. #{e.message}\e[0m"
-    # Delete the proxy from the proxy.txt file
-    proxy_file = File.join(__dir__, 'proxy.txt')
-    proxies.delete(proxy)
-    # Rewrite the rest of the content into the file
-    File.open(proxy_file, 'w') do |file|
-      proxies.each { |p| file.puts(p) }
+    rescue StandardError => e
+      puts "\e[38;2;255;165;0m#{proxy} not working. #{e.message}\e[0m"
+      # Delete the proxy from the proxy.txt file
+      proxy_file = File.join(__dir__, 'proxy.txt')
+      proxies.delete(proxy)
+      # Rewrite the rest of the content into the file
+      File.open(proxy_file, 'w') do |file|
+        proxies.each { |p| file.puts(p) }
+      end
     end
   end
 end
