@@ -81,6 +81,8 @@ By using this script, you can quickly grab and check proxies without the need fo
 
 يحذف لك الي مو شغال من الملف proxy.txt ✅
 
+اكثر من 170 مصدر للبروكسيات بمعدل اكثر من 100 أالف بروكسي في دقيقتين مع فحصهم وعزل البروكسي السيئ وحفظ الجيد في ملف Hits.txt ✅ 
+
 -------------------------------------------------
 **Features of the script**
 
@@ -96,3 +98,5 @@ Checks proxies on two types of connection on Google's website HTTP, HTTPS ✅
 Examines the work proxy for you and sorts it into a file called Hits.txt ✅
 
 if not work proxy It deletes the proxy file in proxy.txt ✅
+
+More than 170 sources of proxies at a rate of more than 100 thousand proxies in two minutes with their examination, bad proxy isolation and good preservation in Hits.txt file ✅
