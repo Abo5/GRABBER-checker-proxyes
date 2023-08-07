@@ -69,6 +69,11 @@ By using this script, you can quickly grab and check proxies without the need fo
 
 **مميزات السكربت**
 
+انصح بأستخدام النسخة proxy-check-v3.rb ✅ 
+
+تم اضافة اذا اكتفيت بعدد البروكسيات بأمكانك الضغط علي في وندوز curl + c و في نظام الماك بامكأنك استخدام command + c في النسخة الاخيرة v3 ✅
+
+
 يثبت لك ويفحص لك اذا المكتبات موجودة ✅
 
 للخروج من السكربت اكتب 00 او exit ✅
@@ -87,6 +92,10 @@ By using this script, you can quickly grab and check proxies without the need fo
 
 -------------------------------------------------
 **Features of the script**
+
+I recommend using the version proxy-check-v3.rb ✅
+
+It has been added if you are satisfied with the number of proxyes, in Windows you can press curl + c and in the Mac system, as if you use command + c in the last version v3 ✅
 
 the script check if there librarys or will install it ✅
 
