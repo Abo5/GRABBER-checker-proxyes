@@ -24,6 +24,19 @@ http://proxyfirenet.blogspot.com/
 https://www.javatpoint.com/proxy-server-list
 https://openproxy.space/list/http
 http://proxydb.net/
+https://proxies365.com/free-proxy-list
+https://24fastproxy.blogspot.com/
+https://proxy.gg/
+https://proxyscra.pe/free-proxy-list
+https://www.dailyfreeproxy.com/
+https://sslproxies24.blogspot.com/
+https://googleproxies24.blogspot.com/
+https://vip-socks24.blogspot.com/
+http://free-proxy.cz/en
+https://www.hidemyass.com/proxy
+https://proxy-list.org
+http://proxy-daily.com
+https://www.socks-proxy.net
 http://olaf4snow.com/public/proxy.txt
 http://westdollar.narod.ru/proxy.htm
 https://openproxy.space/list/socks4
@@ -81,7 +94,6 @@ http://proxy-hunter.blogspot.com/2012/11/13-11-12-l1l2l3-http-proxies-1186.html
 https://openproxy.space/list/http
 https://openproxy.space/list/socks4
 https://openproxy.space/list/socks5
-https://free-proxy-list.net
 https://vpnoverview.com/privacy/anonymous-browsing/free-proxy-servers/
 http://proxydb.net/?protocol=http
 http://proxydb.net/?protocol=https
@@ -98,7 +110,6 @@ https://www.proxy-list.download/HTTPS
 https://www.proxy-list.download/SOCKS4
 https://www.proxy-list.download/SOCKS5
 https://www.freeproxy.world/
-https://free-proxy-list.net/
 https://smallseotools.com/de/free-proxy-list/
 [25]https://www.freeproxy.world/?type=&anonymity=&country=&speed=&port=&page=[page]
 [25]https://hidemy.name/en/proxy-list/?start=[page]
