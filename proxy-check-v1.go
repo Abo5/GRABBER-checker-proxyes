@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"crypto/tls"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -10,30 +9,32 @@ import (
 	"os"
 	"regexp"
 	"strings"
+	"sync"
 	"time"
 )
 
-// ANSI color codes
 const (
-	colorReset  = "\033[0m"
-	colorRed    = "\033[31m"
-	colorGreen  = "\033[32m"
-	colorYellow = "\033[33m"
-	colorPink   = "\033[38;2;255;105;180m"
-	colorOrange = "\033[38;2;255;165;0m"
+	magenta = "\033[38;2;128;0;128m"
+	yellow  = "\033[38;2;255;255;0m"
+	orange  = "\033[38;2;255;165;0m"
+	nothing = "\033[0m"
+	green   = "\033[38;2;0;255;0m"
+	red     = "\033[38;2;255;0;0m"
+	pink    = "\033[38;2;255;105;180m"
 )
 
 func main() {
+	clearTerminal()
 	printLogo()
 
-	fmt.Printf("%sHi, Welcome To Grabber And Checking Proxies, Write 00 To Exit\n", colorYellow)
+	fmt.Printf("%sHi, Welcome To Grabber And Checking Proxies, Write %s00%s To Exit\n", yellow, pink, yellow)
 	fmt.Println("1. Checker Proxies")
 	fmt.Println("2. Grabber Proxies")
 	fmt.Println("3. Grabber and Checker Proxies")
-	fmt.Printf("Please enter your choice (1, 2, or 3): %s", colorReset)
+	fmt.Printf("Please enter your choice (1, 2, or 3): %s", nothing)
 
 	var choice int
-	fmt.Scanf("%d", &choice)
+	fmt.Scanln(&choice)
 
 	if choice == 0 {
 		fmt.Println("Exiting...Thank You For Using Me")
@@ -41,14 +42,20 @@ func main() {
 	}
 
 	if choice == 2 || choice == 3 {
-		fmt.Printf("%s[!] Grabbing Proxies...\n", colorOrange)
+		fmt.Printf("%s[!] Grabbing Proxies...\n", orange)
 		grabProxies()
 	}
 
 	if choice == 1 || choice == 3 {
-		fmt.Printf("\n%s[!] Grabbing Proxies Is Done, Now Checking%s\n", colorPink, colorReset)
+		fmt.Printf("\n%s[!] Grabbing Proxies Is Done, Now Checking\n", magenta)
 		checkProxies()
 	}
+
+	fmt.Printf("\n%s[!] Process completed. Thank you for using the script!%s\n", magenta, nothing)
+}
+
+func clearTerminal() {
+	fmt.Print("\033[H\033[2J")
 }
 
 func printLogo() {
@@ -77,7 +84,7 @@ func printLogo() {
 :---:                           .  ...--------
 ::::.                            . .  ...::---
 `
-	fmt.Println(logo)
+	fmt.Printf("%s%s%s", magenta, logo, nothing)
 }
 
 func grabProxies() {
@@ -88,32 +95,19 @@ func grabProxies() {
 	}
 
 	for _, source := range sources {
-		if !strings.HasPrefix(source, "https://") {
-			continue
-		}
-
-		proxies, err := fetchProxies(source)
-		if err != nil {
-			fmt.Printf("Error fetching proxies from %s: %v\n", source, err)
-			continue
-		}
-
-		for _, proxy := range proxies {
-			fmt.Println(proxy)
-			appendToFile("proxy.txt", proxy)
+		if strings.HasPrefix(source, "https://") {
+			proxies, err := fetchProxies(source)
+			if err != nil {
+				fmt.Printf("Error fetching from %s: %v\n", source, err)
+				continue
+			}
+			saveProxies(proxies)
 		}
 	}
 }
 
 func fetchProxies(url string) ([]string, error) {
-	client := &http.Client{
-		Timeout: 3 * time.Second,
-		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-		},
-	}
-
-	resp, err := client.Get(url)
+	resp, err := http.Get(url)
 	if err != nil {
 		return nil, err
 	}
@@ -128,6 +122,21 @@ func fetchProxies(url string) ([]string, error) {
 	return re.FindAllString(string(body), -1), nil
 }
 
+func saveProxies(proxies []string) {
+	file, err := os.OpenFile("proxy.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		fmt.Printf("Error opening proxy.txt: %v\n", err)
+		return
+	}
+	defer file.Close()
+
+	for _, proxy := range proxies {
+		if _, err := file.WriteString(proxy + "\n"); err != nil {
+			fmt.Printf("Error writing proxy: %v\n", err)
+		}
+	}
+}
+
 func checkProxies() {
 	proxies, err := readLines("proxy.txt")
 	if err != nil {
@@ -135,46 +144,62 @@ func checkProxies() {
 		return
 	}
 
+	var wg sync.WaitGroup
+	semaphore := make(chan struct{}, 50) // Limit to 50 concurrent goroutines
+
 	for _, proxy := range proxies {
-		if checkProxy(proxy) {
-			fmt.Printf("%sWorking ----> %s%s\n", colorGreen, proxy, colorReset)
-			appendToFile("Hits-proxy.txt", proxy)
-		} else {
-			fmt.Printf("%s%s not working%s\n", colorPink, proxy, colorReset)
-			removeFromFile("proxy.txt", proxy)
-		}
+		wg.Add(1)
+		semaphore <- struct{}{}
+		go func(p string) {
+			defer wg.Done()
+			defer func() { <-semaphore }()
+			checkProxy(p)
+		}(proxy)
 	}
+
+	wg.Wait()
 }
 
-func checkProxy(proxy string) bool {
+func checkProxy(proxy string) {
 	proxyURL, err := url.Parse("http://" + proxy)
 	if err != nil {
-		return false
+		fmt.Printf("%sInvalid proxy format: %s%s\n", orange, proxy, nothing)
+		return
 	}
 
 	client := &http.Client{
-		Timeout: 500 * time.Millisecond,
+		Timeout: 5 * time.Second,
 		Transport: &http.Transport{
 			Proxy: http.ProxyURL(proxyURL),
-			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true,
-			},
 		},
 	}
 
 	resp, err := client.Get("http://www.google.com")
-	if err == nil && resp.StatusCode == 200 {
-		resp.Body.Close()
-		return true
+	if err != nil {
+		fmt.Printf("%s%s not working. %v%s\n", orange, proxy, err, nothing)
+		return
 	}
+	defer resp.Body.Close()
 
-	resp, err = client.Get("https://www.google.com")
-	if err == nil && resp.StatusCode == 200 {
-		resp.Body.Close()
-		return true
+	if resp.StatusCode == 200 {
+		fmt.Printf("%sWorking on HTTP ----> %s%s\n", green, proxy, nothing)
+		saveWorkingProxy(proxy)
+	} else {
+		fmt.Printf("%s%s not working. HTTP code: %d%s\n", pink, proxy, resp.StatusCode, nothing)
 	}
+}
 
-	return false
+func saveWorkingProxy(proxy string) {
+	file, err := os.OpenFile("Hits-proxy.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		fmt.Printf("Error opening Hits-proxy.txt: %v\n", err)
+		return
+	}
+	defer file.Close()
+
+	if _, err := file.WriteString(proxy + "\n"); err != nil {
+		fmt.Printf("Error writing working proxy: %v\n", err)
+	}
 }
 
 func readLines(filename string) ([]string, error) {
@@ -190,45 +215,4 @@ func readLines(filename string) ([]string, error) {
 		lines = append(lines, scanner.Text())
 	}
 	return lines, scanner.Err()
-}
-
-func appendToFile(filename, text string) error {
-	f, err := os.OpenFile(filename, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	_, err = f.WriteString(text + "\n")
-	return err
-}
-
-func removeFromFile(filename, text string) error {
-	lines, err := readLines(filename)
-	if err != nil {
-		return err
-	}
-
-	var newLines []string
-	for _, line := range lines {
-		if line != text {
-			newLines = append(newLines, line)
-		}
-	}
-
-	return writeLines(filename, newLines)
-}
-
-func writeLines(filename string, lines []string) error {
-	f, err := os.Create(filename)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	w := bufio.NewWriter(f)
-	for _, line := range lines {
-		fmt.Fprintln(w, line)
-	}
-	return w.Flush()
 }
