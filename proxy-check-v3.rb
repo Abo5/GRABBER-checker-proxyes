@@ -95,15 +95,19 @@ Signal.trap("INT") do
 end
 
 def grab_proxies(source_url)
-  return if $stop_grabbing_proxies  # Check if Ctrl+C was pressed
+  return if $stop_grabbing_proxies
 
   return unless source_url.start_with?("https://")
 
   begin
     response = HTTParty.get(source_url, timeout: 3, verify: false)
     handle_response(response)
+  rescue OpenSSL::SSL::SSLError => e
+    puts "SSL Error - Skipping source URL: #{source_url}"
   rescue Errno::ECONNRESET => e
     puts "Connection reset by peer - Skipping source URL: #{source_url}"
+  rescue => e
+    puts "Error: #{e.message} - Skipping source URL: #{source_url}"
   end
 end
 
